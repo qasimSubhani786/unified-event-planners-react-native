@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {User, validate} = require("../model/user");
+const { User, validate } = require("../model/user");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const asyncHandler = require("../middleware/asyncHandler");
@@ -8,8 +8,8 @@ const auth = require("../middleware/auth");
 const twilio = require("twilio");
 
 // Twilio credentials
-const accountSid = "AC76ab154e63d3695959b429cf05edea42";
-const authToken = "66865e5c0e9ff2f7e18c4bed64749046";
+const accountSid = "";
+const authToken = "";
 const twilioPhoneNumber = "+14172177388";
 
 function formatPhoneNumber(phoneNumber) {
@@ -30,24 +30,38 @@ function generateOTP() {
 router.post(
   "/",
   asyncHandler(async (req, res) => {
-    const {error} = validate(req.body);
+    const { error } = validate(req.body);
     if (error) {
       return res.sendJson(0, 400, error.details[0].message, null);
     }
-    let user = await User.findOne({email: req.body.email});
+    let user = await User.findOne({ email: req.body.email });
     if (user) {
       return res.sendJson(0, 200, "User Alraedy Exist!", null);
     }
-    user = new User(_.pick(req.body, ["name", "email", "cnic", "password", "isAdmin", "phone"]));
+    user = new User(
+      _.pick(req.body, [
+        "name",
+        "email",
+        "cnic",
+        "password",
+        "isAdmin",
+        "phone",
+      ])
+    );
     const salt = await bcrypt.genSalt(10); // create a salt and send and save it to db
     user.password = await bcrypt.hash(user.password, salt);
     await user.save();
     const token = user.generateAuthToken({
       name: user.name,
-      email: user.email
+      email: user.email,
     });
     user.token = token;
-    res.sendJson(1, 200, "User Created Successfully ", _.pick(user, ["name", "email", "_id", "token"]));
+    res.sendJson(
+      1,
+      200,
+      "User Created Successfully ",
+      _.pick(user, ["name", "email", "_id", "token"])
+    );
   })
 );
 
@@ -59,23 +73,28 @@ router.post(
     if (!phone) {
       return res.sendJson(0, 404, "Please Send Your Phone Number", null);
     }
-    let user = await User.findOne({phone: phone});
+    let user = await User.findOne({ phone: phone });
     if (user) {
       const otp = generateOTP();
       const updatedOtp = await User.updateOne(
-        {_id: user._id},
+        { _id: user._id },
         {
           $set: {
-            otp: otp
-          }
+            otp: otp,
+          },
         }
       );
       let sendMessage = await client.messages.create({
         body: `Your Forgot Password Otp is ${otp} for Unified Event Planners`,
         from: twilioPhoneNumber,
-        to: formatPhoneNumber(phone)
+        to: formatPhoneNumber(phone),
       });
-      return res.sendJson(1, 200, "Otp has been send to your phone Number", null);
+      return res.sendJson(
+        1,
+        200,
+        "Otp has been send to your phone Number",
+        null
+      );
     } else {
       return res.sendJson(0, 200, "User not Found!", null);
     }
@@ -90,7 +109,7 @@ router.post(
     if (!otp || !phone) {
       return res.sendJson(0, 404, "Please Send Your Details Correctly", null);
     }
-    let user = await User.findOne({phone: phone}).lean();
+    let user = await User.findOne({ phone: phone }).lean();
     if (user) {
       if (user.otp == otp) {
         return res.sendJson(1, 200, "Otp Verified Successfully", null);
@@ -112,16 +131,16 @@ router.post(
     if (!phone || !password) {
       return res.sendJson(0, 404, "Please Send Your Details Correctly", null);
     }
-    let user = await User.findOne({phone: phone});
+    let user = await User.findOne({ phone: phone });
     if (user) {
       const salt = await bcrypt.genSalt(10);
       const newPassword = await bcrypt.hash(password, salt);
       const updatedOtp = await User.updateOne(
-        {phone: phone},
+        { phone: phone },
         {
           $set: {
-            password: newPassword
-          }
+            password: newPassword,
+          },
         }
       );
       return res.sendJson(1, 200, "Password has been updated", null);
@@ -136,9 +155,14 @@ router.get(
   "/me",
   auth,
   asyncHandler(async (req, res) => {
-    let user = await User.findOne({_id: req.user._id});
+    let user = await User.findOne({ _id: req.user._id });
     if (user) {
-      res.sendJson(1, 200, "User data found", _.pick(user, ["name", "email", "_id", "cnic", "phone"]));
+      res.sendJson(
+        1,
+        200,
+        "User data found",
+        _.pick(user, ["name", "email", "_id", "cnic", "phone"])
+      );
     } else {
       res.sendJson(0, 200, "User data not found", null);
     }
@@ -149,18 +173,18 @@ router.post(
   "/update-user-info",
   auth,
   asyncHandler(async (req, res) => {
-    let user = await User.findOne({_id: req.user._id});
+    let user = await User.findOne({ _id: req.user._id });
     if (user) {
       let updatedUser = await User.findOneAndUpdate(
-        {_id: user._id},
+        { _id: user._id },
         {
           $set: {
             phone: req.body.phone,
             name: req.body.name,
-            cnic: req.body.cnic
-          }
+            cnic: req.body.cnic,
+          },
         },
-        {new: true}
+        { new: true }
       );
       if (updatedUser) {
         res.sendJson(1, 200, "User data updated", updatedUser);
@@ -181,23 +205,33 @@ router.post(
     if (!newPassword || !oldPassword) {
       return res.sendJson(0, 400, "Password must be provided", null);
     }
-    let user = await User.findOne({_id: userId});
+    let user = await User.findOne({ _id: userId });
     if (user) {
       const validPassword = await bcrypt.compare(oldPassword, user.password);
       if (!validPassword) {
-        return res.sendJson(0, 400, "Invalid old password Please Add correct one", null);
+        return res.sendJson(
+          0,
+          400,
+          "Invalid old password Please Add correct one",
+          null
+        );
       }
       const salt = await bcrypt.genSalt(10);
       const newPasswordSalt = await bcrypt.hash(newPassword, salt);
       const updatedOtp = await User.updateOne(
-        {_id: userId},
+        { _id: userId },
         {
           $set: {
-            password: newPasswordSalt
-          }
+            password: newPasswordSalt,
+          },
         }
       );
-      return res.sendJson(1, 200, "Password has been updated successfully", null);
+      return res.sendJson(
+        1,
+        200,
+        "Password has been updated successfully",
+        null
+      );
     } else {
       res.sendJson(0, 200, "User data not found", null);
     }
