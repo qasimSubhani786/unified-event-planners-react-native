@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "UnifiedPlanners",
+    "slug": "UnifiedPlanners",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.qasimsubhani.UnifiedPlanners"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "icon": "./assets/icon.png",
+      "package": "com.qasimsubhani.UnifiedPlanners"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "754d115d-10ea-43c9-b27f-aea847393dff"
+      }
+    }
+  }
+}

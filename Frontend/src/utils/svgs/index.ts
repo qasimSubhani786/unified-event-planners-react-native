@@ -1,0 +1,15 @@
+export {default as LogoIcon} from "./logo-icon.svg";
+export {default as HomeStars} from "./home-stars.svg";
+export {default as BookNow} from "./book-now.svg";
+export {default as Location} from "./location.svg";
+export {default as Search} from "./search.svg";
+export {default as Delete} from "./delete.svg";
+export {default as Edit} from "./edit.svg";
+export {default as Payment} from "./payment.svg";
+export {default as BlueElipse} from "./blue-elipse.svg";
+export {default as Call} from "./call.svg";
+export {default as Payment2} from "./payment2.svg";
+export {default as ViewSvg} from "./viewSvg.svg";
+export {default as Plus} from "./plus.svg";
+export {default as Minus} from "./minus.svg";
+export{ default as EmptyBox} from "./emptyBox.svg"
