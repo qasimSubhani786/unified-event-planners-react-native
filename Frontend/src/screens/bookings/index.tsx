@@ -18,7 +18,7 @@ import {
   useLazyGetBookingsQuery,
 } from "../../utils/redux/slice/emptySplitApi";
 import { useSelector } from "react-redux";
-import { LoginRequiredComponent } from "../Profile";
+import { LoginRequiredComponent } from "../profile";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { ALL_TEXTS } from "../../common";
@@ -41,13 +41,12 @@ const Bookings = () => {
     return array.map((item, idx) => array[array.length - 1 - idx]);
   }
 
-
   useEffect(() => {
     userInfo && getUserBookings();
   }, [refresing, isFocused]);
 
   const getUserBookings = async () => {
-    let res=await getBookings(null);
+    let res = await getBookings(null);
     setRefresing(false);
   };
 
@@ -130,36 +129,39 @@ const Bookings = () => {
                     { label: "Booked", value: "booked" },
                     { label: "Occupied", value: "occupied" },
                     { label: "All", value: "all" },
-
                   ]}
                   setOpen={setIsFilterOpens}
                   placeholder={"Filter Bookings"}
                   setValue={setfilterText}
                   setItems={(e) => {
-                    console.log("set Items", e)
-
+                    console.log("set Items", e);
                   }}
                 />
               </View>
-              {
-                filteredBookings.length == 0 ? (
-                  <NotAvailable text={'No Bookings Available'} />
-                ) :
-                  (reverse_(filteredBookings).map((booking: any) => (
-                    <BookingItem key={booking._id} booking={booking}
-                      onPaynowBtnPress={() => {
-                        navigation.navigate(ALL_TEXTS.SCREEN_NAME.CONFIRMATION_SCREEN, {
-                          bookingId: booking.bookingId
-                        })
-                      }}
-                      onDeleteBookingItem={() => getUserBookings()}
-                    />
-                  ))
-                  )}
+              {filteredBookings.length == 0 ? (
+                <NotAvailable text={"No Bookings Available"} />
+              ) : (
+                reverse_(filteredBookings).map((booking: any) => (
+                  <BookingItem
+                    key={booking._id}
+                    booking={booking}
+                    onPaynowBtnPress={() => {
+                      navigation.navigate(
+                        ALL_TEXTS.SCREEN_NAME.CONFIRMATION_SCREEN,
+                        {
+                          bookingId: booking.bookingId,
+                        }
+                      );
+                    }}
+                    onDeleteBookingItem={() => getUserBookings()}
+                  />
+                ))
+              )}
             </>
           )}
-        </ScrollView>)}
-    </SafeAreaView >
+        </ScrollView>
+      )}
+    </SafeAreaView>
   );
 };
 
@@ -196,17 +198,22 @@ const BookingItem = ({ booking, onPaynowBtnPress, onDeleteBookingItem }) => {
   const [deleteBookingApi, deleteBookingRes] = useDeleteBookingMutation();
 
   const sendInvite = async (booking) => {
-
     try {
       const coordinates = `${booking.hall.location[0]},${booking.hall.location[1]}`;
       const mapUrl = `https://www.google.com/maps/place/${coordinates}`;
 
-      const message = encodeURIComponent(`We are delighted to invite you to the venue ${booking?.hall?.title} on date ${formatTime(booking?.date)} at ${booking?.shift}. Click the link below to view the location on Google Maps:\n${mapUrl}`);
+      const message = encodeURIComponent(
+        `We are delighted to invite you to the venue ${
+          booking?.hall?.title
+        } on date ${formatTime(booking?.date)} at ${
+          booking?.shift
+        }. Click the link below to view the location on Google Maps:\n${mapUrl}`
+      );
       const whatsappUrl = `whatsapp://send?text=${message}`;
 
       await Linking.openURL(whatsappUrl);
     } catch (error) {
-      console.log('Error opening WhatsApp:', error);
+      console.log("Error opening WhatsApp:", error);
     }
   };
 
@@ -295,18 +302,24 @@ const BookingItem = ({ booking, onPaynowBtnPress, onDeleteBookingItem }) => {
         <Text style={styles.time}>{booking.shift}</Text>
       </View>
 
-      {booking?.headCount != 0 && <View style={styles.nPeopleContainr}>
-        <Text style={styles.peopleText}>Number of Persons: </Text>
-        <Text style={styles.count}>{booking.headCount}</Text>
-      </View>}
-      {booking?.totalAmount != 0 && <View style={styles.nPeopleContainr}>
-        <Text style={styles.peopleText}>Total Amount: </Text>
-        <Text style={styles.count}>{`${booking.totalAmount} PKR`}</Text>
-      </View>}
-      {booking?.advanceAmount != 0 && <View style={styles.nPeopleContainr}>
-        <Text style={styles.peopleText}>Amount Paid: </Text>
-        <Text style={styles.count}>{`${booking?.advanceAmount} PKR`}</Text>
-      </View>}
+      {booking?.headCount != 0 && (
+        <View style={styles.nPeopleContainr}>
+          <Text style={styles.peopleText}>Number of Persons: </Text>
+          <Text style={styles.count}>{booking.headCount}</Text>
+        </View>
+      )}
+      {booking?.totalAmount != 0 && (
+        <View style={styles.nPeopleContainr}>
+          <Text style={styles.peopleText}>Total Amount: </Text>
+          <Text style={styles.count}>{`${booking.totalAmount} PKR`}</Text>
+        </View>
+      )}
+      {booking?.advanceAmount != 0 && (
+        <View style={styles.nPeopleContainr}>
+          <Text style={styles.peopleText}>Amount Paid: </Text>
+          <Text style={styles.count}>{`${booking?.advanceAmount} PKR`}</Text>
+        </View>
+      )}
       {/* For now its commented it will be implement */}
       {/* <View style={styles.pkgContainer}>
         <Text style={styles.pkgText}>Pkg: </Text>
@@ -318,7 +331,8 @@ const BookingItem = ({ booking, onPaynowBtnPress, onDeleteBookingItem }) => {
             <Button
               text={"Invite"}
               icon={<FontAwesome5 name="share" size={20} color="white" />}
-              onPress={() => sendInvite(booking)} />
+              onPress={() => sendInvite(booking)}
+            />
           </View>
         )}
         {booking.status === "pending" && (

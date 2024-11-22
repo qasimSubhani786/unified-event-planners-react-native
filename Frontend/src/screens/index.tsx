@@ -2,9 +2,9 @@ import Home from "./home";
 import Event from "./events";
 import Login from "./login";
 import Signup from "./signup";
-import Location from "./Location";
-import Venues from "./Venues";
-import Profile from "./Profile";
+import Location from "./location";
+import Venues from "./venues";
+import Profile from "./profile";
 import BottomTabBase from "./bottom-tabs";
 import HallDetails from "./hall-detail";
 import UpdateProfile from "./update-profile";
@@ -36,12 +36,12 @@ export {
   Meals,
   Bookings,
   Confirmation,
-CheckAvailability,
+  CheckAvailability,
   Aminity,
   Favourite,
   ForgetResetPass,
   ChangePassword,
   ForgetPassword,
   OTPScreen,
-  Payment
+  Payment,
 };
