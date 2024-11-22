@@ -5,6 +5,7 @@
 
 # Node artifact files
 Backend/node_modules/
+Backend/.env
 Frontend/node_modules/
 *.pdf
 dist/

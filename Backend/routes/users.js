@@ -8,8 +8,8 @@ const auth = require("../middleware/auth");
 const twilio = require("twilio");
 
 // Twilio credentials
-const accountSid = "";
-const authToken = "";
+const accountSid = process.env.TIWILLIO_SID;
+const authToken = process.env.TIWILLIO_AUTHTOKEN;
 const twilioPhoneNumber = "+14172177388";
 
 function formatPhoneNumber(phoneNumber) {
